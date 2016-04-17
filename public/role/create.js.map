@@ -1,0 +1,1 @@
+{"version":3,"sources":["create.coffee"],"names":[],"mappings":"AAAA;EAAA,CAAA,CAAE,mBAAF,CACI,CAAC,EADL,CACQ,mBADR,EAC6B,SAAA;WACrB,CAAA,CAAE,IAAF,CACI,CAAC,OADL,CACa,OADb;EADqB,CAD7B;AAAA","file":"create.js","sourcesContent":["$ \"#role-create-form\"\n    .on \"ajax.form.success\", () ->\n        $ this\n            .trigger \"reset\""],"sourceRoot":"/source/"}

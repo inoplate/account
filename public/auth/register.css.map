@@ -1,0 +1,1 @@
+{"version":3,"sources":["register.less","register.css"],"names":[],"mappings":"AAAA;EACI,cAAA;CCCH","file":"register.css","sourcesContent":[".register-box {\n    margin-top: 0;\n}",".register-box {\n  margin-top: 0;\n}\n"],"sourceRoot":"/source/"}

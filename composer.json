@@ -1,0 +1,34 @@
+{
+    "name": "inoplate/account",
+    "description": "Inoplate account manager",
+    "type": "composer",
+    "license": "increative",
+    "authors": [
+        {
+            "name": "Roseffendi",
+            "email": "oii@roseffendi.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Inoplate\\Account\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "database"
+        ],
+        "psr-4": {
+            "Inoplate\\Account\\Tests\\": "tests/app"
+        }
+    },
+    "require-dev": {
+        "codeception/codeception": "^2.1",
+        "codeception/specify": "^0.4",
+        "codeception/verify": "^0.3.0"
+    },
+    "require": {
+        "ramsey/uuid": "^3.1"
+    }
+}
