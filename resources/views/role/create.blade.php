@@ -1,11 +1,9 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.roles.create.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.roles.create.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.roles.create.title'))
+@php($subtitle = trans('inoplate-account::labels.roles.create.sub_title'))
 
-@push('footer-scripts-stack')
-    <script src="/vendor/inoplate-account/role/create.js" type="text/javascript"></script>
-@endpush
+@addJs('vendor/inoplate-account/role/create.js')
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')

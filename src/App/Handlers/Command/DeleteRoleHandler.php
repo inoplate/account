@@ -2,7 +2,6 @@
 
 namespace Inoplate\Account\App\Handlers\Command;
 
-use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Account\Domain\Commands\DeleteRole;
 use Inoplate\Account\Domain\Events\RoleWasDeleted;
 use Inoplate\Account\Domain\Repositories\Role as RoleRepository;
@@ -41,7 +40,7 @@ class DeleteRoleHandler
      */
     public function handle(DeleteRole $command)
     {
-        $id = new AccountDomainModels\RoleId($command->id);
+        $id = $command->id;
         $role = $this->retrieveRole($id);
 
         $this->roleRepository->remove($role);
@@ -52,15 +51,17 @@ class DeleteRoleHandler
     /**
      * Retrieve role and ensure role is exist
      * 
-     * @param  AccountDomainModels\RoleId $id
+     * @param  mixed $id
      * @return AccountDomainModels\Role
      */
-    protected function retrieveRole(AccountDomainModels\RoleId $id)
+    protected function retrieveRole($id)
     {
         $role = $this->roleRepository->findById($id);
 
-        if(is_null($role)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid role id");
+        if(is_null($role)) {
+            $id = $role->id()->value();
+            throw new ValueNotFoundException("[$id] is not valid role id");
+        }
 
         return $role;
     }

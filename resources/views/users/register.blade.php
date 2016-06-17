@@ -1,11 +1,9 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.users.register.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.users.register.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.users.register.title'))
+@php($subtitle = trans('inoplate-account::labels.users.register.sub_title'))
 
-@push('footer-scripts-stack')
-    <script src="/vendor/inoplate-account/users/register.js" type="text/javascript"></script>
-@endpush
+@addJs('vendor/inoplate-account/users/register.js')
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')
@@ -17,6 +15,7 @@
 
                 <form class="ajax" method="post" action="/admin/inoplate-account/users/register" id="user-registration-form">
                     <div class="box-body">
+                      <input type="hidden" name="avatar">
                       @include('inoplate-account::users.form')
                       <div class="form-group">
                         <label for="password" class="control-label">{{ trans('inoplate-account::labels.password') }}</label>

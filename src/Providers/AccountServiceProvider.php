@@ -6,6 +6,7 @@ use Inoplate\Foundation\Providers\AppServiceProvider as ServiceProvider;
 use Inoplate\Account\User;
 use Inoplate\Account\Role;
 use Inoplate\Account\ModelObservers;
+use Inoplate\Foundation\App\Services\Events\Dispatcher as Events;
 
 class AccountServiceProvider extends ServiceProvider
 {   
@@ -25,7 +26,7 @@ class AccountServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    public function boot()
+    public function boot(Events $events)
     {
         $this->loadPublic();
         $this->loadView();
@@ -34,7 +35,7 @@ class AccountServiceProvider extends ServiceProvider
         $this->loadMigration();
 
         User::Observe(new ModelObservers\UserObserver());
-        Role::Observe(new ModelObservers\RoleObserver());
+        Role::Observe(new ModelObservers\RoleObserver($events));
 
         $this->app['navigation']->register(require __DIR__ .'/../Http/navigations.php');
     }

@@ -28,12 +28,12 @@ class Collector
      * @param  string $description
      * @return void
      */
-    public function collect($name, $description)
+    public function collect($name, $description, $module = '')
     {
         $permissionId = new AccountDomainModels\PermissionId($name);
 
         if( !$this->permissionRepository->findById($permissionId)) {
-            $description = new FoundationDomainModels\Description(['description' => $description]);
+            $description = new FoundationDomainModels\Description(['description' => $description, 'module' => $module]);
             $permission = new AccountDomainModels\Permission($permissionId, $description);
 
             $this->permissionRepository->save($permission);

@@ -1,6 +1,6 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.dashboard.title') /*--}}
+@php($title = trans('inoplate-account::labels.dashboard.title'))
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')

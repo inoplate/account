@@ -48,7 +48,7 @@ $ '#active-users-table'
             $overlay.addClass 'hide'
 
             $ 'form', '#users-update-form'
-                .prop 'action', "/admin/inoplate-account/users/#{result.user.id}"
+                .prop 'action', "/admin/inoplate-account/users/#{result.user.id}/edit"
 
             $ 'input[name="username"]', '#users-update-form'
                 .val result.user.username

@@ -3,10 +3,17 @@
 namespace Inoplate\Account\Http\Middleware;
 
 use Closure;
-use Authis;
+use Roseffendi\Authis\Authis;
 
-class Authorize
+class ResourceOwner
 {
+    protected $authis;
+
+    public function __construct(Authis $authis)
+    {
+        $this->authis = $authis;
+    }
+
     /**
      * Handle an incoming request.
      * @param  \Illuminate\Http\Request  $request
@@ -14,16 +21,14 @@ class Authorize
      * @param  string|null               $ablity
      * @return mixed
      */
-    public function handle($request, Closure $next, $model = null, $ability = null)
+    public function handle($request, Closure $next, $resourceParamName = 'id')
     {
-        // Naming convention of ability
-        // Taken from route name
+        $resource = $request->{$resourceParamName};
+
+        
         $ability = $ability ?: $request->route()->getName();
-        $model = $model ? $request->route($model) : null;
 
-        $check = $model ? Authis::forResource($model)->check($ability) : Authis::check($ability);
-
-        if( !$check) {
+        if( !Authis::check($ability)) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 403);
             } else {

@@ -80,7 +80,7 @@ class RegisterNewUserHandler
         $roles = [];
 
         foreach ($idOfRoles as $id) {
-            $roles[] = $this->roleRepository->findById(new AccountDomainModels\RoleId($id));
+            $roles[] = $this->roleRepository->findById($id);
         }
 
         return $roles;
@@ -97,7 +97,7 @@ class RegisterNewUserHandler
         $specification = new AccountDomainSpecifications\UsernameIsUnique($this->userRepository);
 
         if(!$specification->isSatisfiedBy($username))
-            throw new ValueIsNotUniqueException("Username [$username] was already taken");
+            throw new ValueIsNotUniqueException("Username [$username->value()] was already taken");
             
     }
 
@@ -112,6 +112,6 @@ class RegisterNewUserHandler
         $specification = new AccountDomainSpecifications\EmailIsUnique($this->userRepository);
 
         if(!$specification->isSatisfiedBy($email))
-            throw new ValueIsNotUniqueException("Email [$email] was already taken");
+            throw new ValueIsNotUniqueException("Email [$email->value()] was already taken");
     }
 }

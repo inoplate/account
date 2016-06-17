@@ -1,13 +1,9 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.users.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.users.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.users.title'))
+@php($subtitle = trans('inoplate-account::labels.users.sub_title'))
 
-@include('inoplate-foundation::partials.datatables-component')
-
-@push('footer-scripts-stack')
-    <script src="/vendor/inoplate-account/users/index.js" type="text/javascript"></script>
-@endpush
+@addAsset('datatables')
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')
@@ -65,3 +61,5 @@
         </div>
     </section>
 @endsection
+
+@addJs(['vendor/inoplate-account/users/index.js'])

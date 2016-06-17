@@ -51,7 +51,7 @@ class DescribeUserHandler
         $this->ensureUsernameIsUnique($username, $id);
         $this->ensureEmailIsUnique($email, $id);
 
-        $user = $this->retrieveUser($id);
+        $user = $this->retrieveUser($id->value());
 
         $user->setUsername($username);
         $user->setEmail($email);
@@ -65,15 +65,17 @@ class DescribeUserHandler
     /**
      * Retrieve user and ensure user is exist
      * 
-     * @param  AccountDomainModels\UserId $id
+     * @param  mixed $id
      * @return AccountDomainModels\User
      */
-    protected function retrieveUser(AccountDomainModels\UserId $id)
+    protected function retrieveUser($id)
     {
         $user = $this->userRepository->findById($id);
 
-        if(is_null($user)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid user id");
+        if(is_null($user)) {
+            $id = $id->value();
+            throw new ValueNotFoundException("[$id] is not valid user id");
+        }
 
         return $user;
     }
@@ -89,8 +91,10 @@ class DescribeUserHandler
     {
         $specification = new AccountDomainSpecifications\UsernameIsUnique($this->userRepository, $id);
 
-        if(!$specification->isSatisfiedBy($username))
-            throw new ValueIsNotUniqueException("Username [(string)$username] was already taken");
+        if(!$specification->isSatisfiedBy($username)) {
+            $username = $username->value();
+            throw new ValueIsNotUniqueException("Username [$username] was already taken");
+        }
             
     }
 
@@ -105,7 +109,9 @@ class DescribeUserHandler
     {
         $specification = new AccountDomainSpecifications\EmailIsUnique($this->userRepository, $id);
 
-        if(!$specification->isSatisfiedBy($email))
-            throw new ValueIsNotUniqueException("Email [(string)$email] was already taken");
+        if(!$specification->isSatisfiedBy($email)) {
+            $email = $email->value();
+            throw new ValueIsNotUniqueException("Email [$email] was already taken");
+        }
     }
 }

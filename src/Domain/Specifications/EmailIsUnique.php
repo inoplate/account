@@ -39,7 +39,7 @@ class EmailIsUnique implements Specification
      */
     public function isSatisfiedBy(SpecificationCandidate $candidate)
     {
-        if($user = $this->userRepository->findByEmail($candidate))
+        if($user = $this->userRepository->findByEmail($candidate->value()))
         {
             if(!$user->id()->equal($this->id))
                 return false;

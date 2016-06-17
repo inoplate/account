@@ -54,10 +54,13 @@ return [
         ],
     ],
     'permissions' => [
+        'ungrouped_module' => 'Ungrouped',
         'title' => 'Permissions',
         'sub_title' => 'Manage roles-permissions matrices',
         'table' => [
-            'pivot' => 'Permissions / Roles'
+            'pivot' => 'Permissions / Roles',
+            'permissions' => 'Permissions',
+            'modules' => 'Modules'
         ],
     ],
     'dashboard' => [

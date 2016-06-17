@@ -2,9 +2,7 @@
 
 namespace Inoplate\Account\Domain\Repositories;
 
-use Inoplate\Account\Domain\Models\RoleId;
-use Inoplate\Account\Domain\Models\Role as RoleModel;
-use Inoplate\Foundation\Domain\Models as FoundationModels;
+use Inoplate\Account\Domain\Models\Role as Model;
 
 interface Role
 {
@@ -25,18 +23,18 @@ interface Role
     /**
      * Retrieve role by id
      * 
-     * @param  RoleId $id
+     * @param  mixed $id
      * @return Inoplate\Account\Domain\Models\Role
      */
-    public function findById(RoleId $id);
+    public function findById($id);
 
     /**
      * Retrieve role by name
      * 
-     * @param  Inoplate\Foundation\Domain\Models\Name $name
+     * @param  mixed $name
      * @return Inoplate\Account\Domain\Models\Role
      */
-    public function findByName(FoundationModels\Name $name);
+    public function findByName($name);
 
     /**
      * Retrieve default roles
@@ -48,16 +46,16 @@ interface Role
     /**
      * Save entity updates
      * 
-     * @param  RoleModel   $entity
+     * @param  mixed   $entity
      * @return void
      */
-    public function save(RoleModel $entity);
+    public function save(Model $entity);
 
     /**
      * Mark the end of life of entity
      * 
-     * @param  RoleModel   $entity
+     * @param  $id
      * @return void
      */
-    public function remove(RoleModel $entity);
+    public function remove(Model $id);
 }

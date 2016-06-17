@@ -5,11 +5,9 @@ namespace Inoplate\Account\Infrastructure\Repositories;
 use Ramsey\Uuid\Uuid;
 use Inoplate\Account\Repositories\User\EmailReset as Contract;
 use Inoplate\Account\EmailReset as Model;
-use Inoplate\Foundation\Infrastructure\GenericEloquentRepository;
 
 class EloquentEmailReset implements Contract
 {
-    use GenericEloquentRepository;
 
     /**
      * @var Inoplate\Account\EmailReset
@@ -34,7 +32,7 @@ class EloquentEmailReset implements Contract
      */
     public function findByUserId($userId)
     {
-        return $this->findBy('user_id', $userId);
+        return $this->model->where('user_id', $userId)->first();
     }
 
     /**
@@ -45,7 +43,7 @@ class EloquentEmailReset implements Contract
      */
     public function findByEmail($email)
     {
-        return $this->findBy('email', $email);
+        return $this->model->where('email', $email)->first();
     }
 
     /**
@@ -56,7 +54,7 @@ class EloquentEmailReset implements Contract
      */
     public function findByToken($token)
     {
-        return $this->findBy('token', $token);
+        return $this->model->where('token', $token)->first();
     }
 
     /**

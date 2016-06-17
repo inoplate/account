@@ -34,6 +34,8 @@ return [
     ],
     'profile' => [
         'email_changed' => 'Email was successfully updated',
-        'updated' => 'Your profiled was successfully updated',
+        'updated' => 'Your profile was successfully updated',
+        'avatar_updated' => 'Avatar was successfully updated',
+        'avatar_must_be_image' => 'Avatar must be an image'
     ]
 ];

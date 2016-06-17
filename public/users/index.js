@@ -33,7 +33,7 @@
     $.get(url, function(result) {
       var key, role;
       $overlay.addClass('hide');
-      $('form', '#users-update-form').prop('action', "/admin/inoplate-account/users/" + result.user.id);
+      $('form', '#users-update-form').prop('action', "/admin/inoplate-account/users/" + result.user.id + "/edit");
       $('input[name="username"]', '#users-update-form').val(result.user.username);
       $('input[name="email"]', '#users-update-form').val(result.user.email);
       $('input[name="name"]', '#users-update-form').val(result.user.description.name);

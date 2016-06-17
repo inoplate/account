@@ -44,12 +44,15 @@ class UsersController extends Controller
         return view('inoplate-account::users.index', compact('actions', 'roles'));
     }
 
-    public function getDatatables(Dales $dales, $trashed = false)
+    public function getDatatables(Request $request, Dales $dales, $trashed = false)
     {
+        $status = $request->active;
+        $roles = $request->roles;
+
         if($trashed) {
-            return $this->getTrashedUsersDatatables($dales);
+            return $this->getTrashedUsersDatatables($dales, $status, $roles);
         }else {
-            return $this->getActiveUsersDatatables($dales);
+            return $this->getActiveUsersDatatables($dales, $status, $roles);
         }
     }
 
@@ -71,18 +74,38 @@ class UsersController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        $desc = ['password' => bcrypt($request->password), 'name' => $request->name, 'active' => $request->status ? true : false];
+        $desc = [ 
+                    'password' => bcrypt($request->password), 
+                    'name' => $request->name, 
+                    'active' => $request->status ? true : false,
+                    'avatar' => $request->avatar
+                ];
 
         $bus->dispatch( new Commands\RegisterNewUser($request->username, $request->email, $request->roles, $desc) );
 
-        $user = $this->userRepository->findByUsername(new AccountDomainModels\Username($request->username))->toArray();
+        $user = $this->userRepository->findByUsername($request->username)->toArray();
 
         return $this->formSuccess(route('account.admin.users.update.get', ['id' => $user['id']]), ['message' => trans('inoplate-account::messages.users.registered'), 'user' => $user]);
     }
 
+    public function getShow(RoleRepository $roleRepository, $id)
+    {
+        dd('asdasd');
+        $user = $this->userRepository->findById($id);
+        $roles = $roleRepository->all();
+
+        if(is_null($user)) {
+            abort(404);
+        }else {
+            $user = $user->toArray();
+        }
+
+        return $this->getResponse('inoplate-account::users.update', compact('user', 'roles'));
+    }
+
     public function getUpdate(RoleRepository $roleRepository, $id)
     {
-        $user = $this->userRepository->findById(new AccountDomainModels\UserId($id));
+        $user = $this->userRepository->findById($id);
         $roles = $roleRepository->all();
 
         if(is_null($user)) {
@@ -96,7 +119,7 @@ class UsersController extends Controller
 
     public function putUpdate(Request $request, Bus $bus, $id)
     {
-        $user = $this->userRepository->findById(new AccountDomainModels\UserId($id));
+        $user = $this->userRepository->findById($id);
 
         if(is_null($user)) {
             abort(404);
@@ -125,7 +148,7 @@ class UsersController extends Controller
 
         $bus->dispatch( new Commands\DescribeUser($id, $request->username, $request->email, $desc));
 
-        $user = $this->userRepository->findById(new AccountDomainModels\UserId($id))->toArray();
+        $user = $this->userRepository->findById($id)->toArray();
 
         return $this->formSuccess(route('account.admin.users.index.get'), ['message' => trans('inoplate-account::messages.users.updated'), 'user' => $user]);
     }
@@ -145,7 +168,7 @@ class UsersController extends Controller
     {
         $ids = explode(',', $ids);
         foreach ($ids as $id) {
-            $this->userRepository->createModel()
+            $this->userRepository->getModel()
                                  ->onlyTrashed()
                                  ->find($id)
                                  ->restore();
@@ -158,7 +181,7 @@ class UsersController extends Controller
     {
         $ids = explode(',', $ids);
         foreach ($ids as $id) {
-            $this->userRepository->createModel()
+            $this->userRepository->getModel()
                                 ->onlyTrashed()
                                 ->find($id)
                                 ->forceDelete();
@@ -167,9 +190,11 @@ class UsersController extends Controller
         return $this->formSuccess(route('account.admin.users.index.get'), ['message' => trans('inoplate-account::messages.users.permanently-deleted')]);
     }
 
-    protected function getActiveUsersDatatables(Dales $dales)
+    protected function getActiveUsersDatatables(Dales $dales, $status, $roles)
     {
         return $dales->setDTDataProvider($this->userRepository)
+                     ->ofStatus($status)
+                     ->ofRoles($roles)
                      ->addColumn('roles', function($data){
                         return collect($data['roles'])->lists('name');
                      })
@@ -187,9 +212,12 @@ class UsersController extends Controller
                      ->render();
     }
 
-    protected function getTrashedUsersDatatables(Dales $dales)
+    protected function getTrashedUsersDatatables(Dales $dales, $status, $roles)
     {
-        return $dales->setDTDataProvider($this->userRepository, ['deleted'])
+        return $dales->setDTDataProvider($this->userRepository)
+                     ->ofTrashed()
+                     ->ofStatus($status)
+                     ->ofRoles($roles)
                      ->addColumn('roles', function($data){
                         return collect($data['roles'])->lists('name');
                      })

@@ -5,9 +5,18 @@ namespace Inoplate\Account\ModelObservers;
 use Inoplate\Account\Role;
 use Inoplate\Account\User;
 use Inoplate\Foundation\Exceptions\DataComplainException;
+use Inoplate\Notification\Events\Notification\NewNotificationPushed;
+use Inoplate\Foundation\App\Services\Events\Dispatcher as Events;
 
 class RoleObserver
 {
+    protected $events;
+
+    public function __construct(Events $events)
+    {
+        $this->events = $events;
+    }
+
     public function deleting($model)
     {
         if($model->users->count() > 0) {

@@ -1,7 +1,7 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.roles.update.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.roles.update.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.roles.update.title'))
+@php($subtitle = trans('inoplate-account::labels.roles.update.sub_title'))
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')
@@ -11,7 +11,7 @@
             <div class="col-md-12">
                 <div class="box box-info">
 
-                <form class="ajax" method="post" action="/admin/inoplate-account/roles/{{ $role['id'] }}">
+                <form class="ajax" method="post" action="{{ route('account.admin.roles.update.put', ['id' => $role['id']]) }}">
                     <input type="hidden" name="_method" value="put" />
                     <div class="box-body">
                       @include('inoplate-account::role.form')

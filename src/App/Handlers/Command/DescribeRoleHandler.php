@@ -48,7 +48,7 @@ class DescribeRoleHandler
         $id = new AccountDomainModels\RoleId($command->id);
         $this->ensureNameIsUnique($name, $id);
 
-        $role = $this->retrieveRole($id);
+        $role = $this->retrieveRole($id->value());
 
         $role->setName($name);
         $role->describe($description);
@@ -61,15 +61,15 @@ class DescribeRoleHandler
     /**
      * Retrieve role and ensure role is exist
      * 
-     * @param  AccountDomainModels\RoleId $id
+     * @param  mixed $id
      * @return AccountDomainModels\Role
      */
-    protected function retrieveRole(AccountDomainModels\RoleId $id)
+    protected function retrieveRole($id)
     {
         $role = $this->roleRepository->findById($id);
 
         if(is_null($role)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid role id");
+            throw new ValueNotFoundException("[$id] is not valid role id");
 
         return $role;
     }

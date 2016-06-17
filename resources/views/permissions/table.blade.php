@@ -2,7 +2,8 @@
 
 <table id="permissions-table" class="table table-bordered table-striped datatable" role="grid" width="100%">
     <thead>
-        <th>{{ trans('inoplate-account::labels.permissions.table.pivot') }}</th>
+        <th>{{ trans('inoplate-account::labels.permissions.table.modules') }}</th>
+        <th>{{ trans('inoplate-account::labels.permissions.table.permissions') }}</th>
         @foreach($roles as $role)
             <th>{{ $role->name()->value() }}</th>
         @endforeach
@@ -10,6 +11,7 @@
     <tbody>
         @foreach($permissions as $permission)
             <tr>
+                <td>{{ $permission->description()->value()['module'] ? trans($permission->description()->value()['module']) : trans('inoplate-account::labels.permissions.ungrouped_module') }} </td>
                 <td>{{ trans($permission->description()->value()['description']) }}</td>
                 @foreach($roles as $role)
                     @if(in_array($permission, $role->permissions()))

@@ -39,7 +39,7 @@ class RolenameIsUnique implements Specification
      */
     public function isSatisfiedBy(SpecificationCandidate $candidate)
     {
-        if($user = $this->roleRepository->findByName($candidate))
+        if($user = $this->roleRepository->findByName($candidate->value()))
         {
             if(!$user->id()->equal($this->id))
                 return false;

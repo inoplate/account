@@ -1,14 +1,10 @@
-{{--*/
-  $userRoles = [];
+@php($userRoles = [])
 
-  if(isset($user['roles'])) {
-    foreach($user['roles'] as $userRole) {
-      $userRoles[] = $userRole['id'];
-    }
-  }
+@if(isset($user['roles']))
+  @php($userRoles = array_pluck($user['roles'], 'id'))
+@endif
 
-  $status = !old('status') ? !isset($user['description']['active']) ? 0 : $user['description']['active'] : old('status');
-/*--}}
+@php($status = !old('status') ? !isset($user['description']['active']) ? 0 : $user['description']['active'] : old('status'))
 
 <div class="form-group">
   <input type="hidden" name="_token" value="{{ csrf_token() }}" />

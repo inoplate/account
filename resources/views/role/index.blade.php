@@ -1,13 +1,11 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.roles.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.roles.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.roles.title'))
+@php($subtitle = trans('inoplate-account::labels.roles.sub_title'))
 
-@include('inoplate-foundation::partials.datatables-component')
-
-@push('footer-scripts-stack')
-    <script src="/vendor/inoplate-account/role/index.js" type="text/javascript"></script>
-@endpush
+@addAsset('datatables')
+@addCss('vendor/inoplate-account/role/index.css')
+@addJs('vendor/inoplate-account/role/index.js')
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')

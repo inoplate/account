@@ -4,19 +4,14 @@ namespace Inoplate\Account\Infrastructure\Repositories;
 
 use Ramsey\Uuid\Uuid;
 use Inoplate\Account\User as Model;
+use Roseffendi\Dales\DTDataProvider;
+use Roseffendi\Dales\Laravel\ProvideDTData;
 use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Account\Domain\Repositories\User as Contract;
 use Inoplate\Account\Domain\Repositories\Role as RoleRepository;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
-use Illuminate\Contracts\Auth\Authenticatable as UserContract;
-use Roseffendi\Dales\DTDataProvider;
-use Roseffendi\Dales\Laravel\ProvideDTData;
 
-class EloquentUser implements Contract, UserProvider, DTDataProvider
+class EloquentUser implements Contract, DTDataProvider
 {
     use ProvideDTData;
 
@@ -24,11 +19,6 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
      * @var Inoplate\Account\User
      */
     protected $model;
-
-    /**
-     * @var Illuminate\Contracts\Hashing\Hasher
-     */
-    protected $hasher;
 
     /**
      * @var Inoplate\Account\Domain\Repositories\RoleRepository
@@ -60,21 +50,13 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
      * Create new EloquentUser instance
      * 
      * @param Model          $model
-     * @param HasherContract $hasher
      * @param RoleRepository $roleRepository
      */
-    public function __construct(
-        Model $model, 
-        HasherContract $hasher, 
-        RoleRepository $roleRepository,
-        Request $request
-    ){
+    public function __construct(Model $model, RoleRepository $roleRepository)
+    {
         $this->model = $model;
-        $this->hasher = $hasher;
         $this->roleRepository = $roleRepository;
-        $this->dtModel = $model->with('roles')
-                               ->ofStatus($request->input('active'))
-                               ->ofRoles($request->input('roles'));
+        $this->dtModel = $model->with('roles');
     }
 
     /**
@@ -90,42 +72,52 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
     }
 
     /**
+     * Create new eloquent model
+     * 
+     * @return Model
+     */
+    public function getModel()
+    {
+        return $this->model->newInstance();
+    }
+
+    /**
      * Retrieve user by id
      * 
-     * @param  Inoplate\Account\Domain\Models\UserId $id
+     * @param  mixed $id
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findById(AccountDomainModels\UserId $id)
+    public function findById($id)
     {
-        $user = $this->model->find($id->value());
+        $item = $this->model->find($id);
 
-        return $this->toDomainModel($user);
+        return $this->toDomainModel($item);
     }
 
     /**
      * Retrieve user by email
      * 
-     * @param  Inoplate\Foundation\Domain\Models\Email $email
+     * @param  mixed $email
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findByEmail(FoundationDomainModels\Email $email)
-    {
-        $user = $this->model->where('email', $email->value())->first();
+    public function findByEmail($email)
+    {   
+        $item = $this->model->where('email', $email)->first();
 
-        return $this->toDomainModel($user);
+        return $this->toDomainModel($item);
     }
 
     /**
      * Retrieve user by username
      * 
-     * @param  string $username
+     * @param  mixed $username
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findByUsername(AccountDomainModels\Username $username)
+    public function findByUsername($username)
     {
-        $user = $this->model->where('username', $username->value())->first();
+        $item = $this->model->where('username', $username)->first();
 
-        return $this->toDomainModel($user);
+        return $this->toDomainModel($item);
     }
 
     /**
@@ -136,27 +128,27 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
      */
     public function save(AccountDomainModels\User $entity)
     {
-        $user = $this->model->firstOrNew([ 'id' => $entity->id()->value() ]);
-        $user->id = $entity->id()->value();
-        $user->username = $entity->username()->value();
-        $user->email = $entity->email()->value();
+        $entity = $entity->toArray();
 
-        $description = $entity->description()->value();
-        $domainRoles = $entity->roles();
+        $user = $this->model->firstORNew(['id' => $entity['id']]);
+        $user->username = $entity['username'];
+        $user->email = $entity['email'];
+        $description = $entity['description'];
 
-        $roles = [];
+        $roles = $entity['roles'];
+        $rolesToSync = [];
 
         foreach ($description as $key => $value) {
             $user->{$key} = $value;
         }
-        
+
         $user->save();
-        
-        foreach ($domainRoles as $role) {
-            $roles[] = $role->id()->value();
+
+        foreach ($roles as $role) {
+            $rolesToSync[] = $role['id'];
         }
 
-        $user->roles()->sync($roles);
+        $user->roles()->sync($rolesToSync);
     }
 
     /**
@@ -173,108 +165,39 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
     }
 
     /**
-     * Retrieve a user by their unique identifier.
-     *
-     * @param  mixed  $identifier
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public function retrieveById($identifier)
-    {
-        return $this->createModel()->newQuery()->find($identifier);
-    }
-
-    /**
-     * Retrieve a user by their unique identifier and "remember me" token.
-     *
-     * @param  mixed  $identifier
-     * @param  string  $token
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public function retrieveByToken($identifier, $token)
-    {
-        $model = $this->createModel();
-
-        return $model->newQuery()
-            ->where($model->getAuthIdentifierName(), $identifier)
-            ->where($model->getRememberTokenName(), $token)
-            ->first();
-    }
-
-    /**
-     * Update the "remember me" token for the given user in storage.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  string  $token
-     * @return void
-     */
-    public function updateRememberToken(UserContract $user, $token)
-    {
-        $user->setRememberToken($token);
-
-        $user->save();
-    }
-
-    /**
-     * Retrieve a user by the given credentials.
-     *
-     * @param  array  $credentials
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public function retrieveByCredentials(array $credentials)
-    {
-        // First we will add each credential element to the query as a where clause.
-        // Then we can execute the query and, if we found a user, return it in a
-        // Eloquent User "model" that will be utilized by the Guard instances.
-        $query = $this->createModel()->newQuery();
-
-        foreach ($credentials as $key => $value) {
-            if (! Str::contains($key, 'password')) {
-                if($key == 'identifier') {
-                    $query->where(function($query) use ($value){
-                        $query->where('username', $value)
-                              ->orWhere('email', $value);
-                    });
-                }else {
-                    $query->where($key, $value);
-                }
-            }
-        }
-        
-        return $query->first();
-    }
-
-    /**
-     * Validate a user against the given credentials.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  array  $credentials
-     * @return bool
-     */
-    public function validateCredentials(UserContract $user, array $credentials)
-    {
-        $plain = $credentials['password'];
-
-        return $this->hasher->check($plain, $user->getAuthPassword());
-    }
-
-    /**
-     * Create a new instance of the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function createModel()
-    {
-        return $this->model->newInstance();
-    }
-
-    /**
-     * Scope of deleted datatables
+     * Scope of trashed datatables
      * 
      * @return self
      */
-    public function dtScopeOfDeleted()
+    public function dtScopeOfTrashed()
     {
         $this->dtModel = $this->dtModel->onlyTrashed();
+
+        return $this;
+    }
+
+    /**
+     * Scope of user status
+     * 
+     * @param  boolean $status
+     * @return self
+     */
+    public function dtScopeOfStatus($status)
+    {
+        $this->dtModel = $this->dtModel->ofStatus($status);
+
+        return $this;
+    }
+
+    /**
+     * Scope of roles
+     * 
+     * @param  array|null $roles
+     * @return self
+     */
+    public function dtScopeOfRoles($roles)
+    {
+        $this->dtModel = $this->dtModel->ofRoles($roles);
 
         return $this;
     }
@@ -299,7 +222,7 @@ class EloquentUser implements Contract, UserProvider, DTDataProvider
             $roles = [];
 
             foreach ($plainRoles as $role) {
-                $roles[] = $this->roleRepository->findById( new AccountDomainModels\RoleId($role->id));
+                $roles[] = $this->roleRepository->findById($role->id);
             }
 
             return new AccountDomainModels\User($id, $username, $email, $description, $roles);

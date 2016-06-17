@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password', 60);
             $table->string('timezone')->nullable();
             $table->string('locale')->nullable();
+            $table->text('avatar')->nullable();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

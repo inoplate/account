@@ -2,10 +2,7 @@
 
 namespace Inoplate\Account\Domain\Repositories;
 
-use Inoplate\Account\Domain\Models\UserId;
-use Inoplate\Account\Domain\Models\Username;
-use Inoplate\Account\Domain\Models\User as UserModel;
-use Inoplate\Foundation\Domain\Models as FoundationModels;
+use Inoplate\Account\Domain\Models\User as Model;
 
 interface User
 {
@@ -19,40 +16,40 @@ interface User
     /**
      * Retrieve user by id
      * 
-     * @param  UserId $id
+     * @param  mixed $id
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findById(UserId $id);
+    public function findById($id);
 
     /**
      * Retrieve user by email
      * 
-     * @param  Inoplate\Foundation\Domain\Models\Email $email
+     * @param  mixed $email
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findByEmail(FoundationModels\Email $email);
+    public function findByEmail($email);
 
     /**
      * Retrieve user by username
      * 
-     * @param  Username $username
+     * @param  mixed $username
      * @return Inoplate\Account\Domain\Models\User
      */
-    public function findByUsername(Username $username);
+    public function findByUsername($username);
 
     /**
      * Save entity updates
      * 
-     * @param  UserModel   $entity
+     * @param  Model   $entity
      * @return void
      */
-    public function save(UserModel $entity);
+    public function save(Model $entity);
 
     /**
      * Mark the end of life of entity
      * 
-     * @param  UserModel   $entity
+     * @param  Model   $entity
      * @return void
      */
-    public function remove(UserModel $entity);
+    public function remove(Model $id);
 }

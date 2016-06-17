@@ -31,7 +31,7 @@
     $overlay.removeClass('hide');
     $.get(url, function(result) {
       $overlay.addClass('hide');
-      $('form', '#update-form').prop('action', "/admin/inoplate-account/roles/" + result.role.id);
+      $('form', '#update-form').prop('action', "/admin/inoplate-account/roles/" + result.role.id + "/edit");
       $('input[name="name"]', '#update-form').val(result.role.name);
       return $('input[name="slug"]', '#update-form').val(result.role.description.slug);
     });

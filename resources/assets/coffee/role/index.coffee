@@ -47,7 +47,7 @@ $ '#active-table'
             $overlay.addClass 'hide'
 
             $ 'form', '#update-form'
-                .prop 'action', "/admin/inoplate-account/roles/#{result.role.id}"
+                .prop 'action', "/admin/inoplate-account/roles/#{result.role.id}/edit"
 
             $ 'input[name="name"]', '#update-form'
                 .val result.role.name

@@ -41,7 +41,7 @@ class UnregisterUserHandler
      */
     public function handle(UnregisterUser $command)
     {
-        $id = new AccountDomainModels\UserId($command->id);
+        $id = $command->id;
         $user = $this->retrieveUser($id);
 
         $this->userRepository->remove($user);
@@ -52,15 +52,15 @@ class UnregisterUserHandler
     /**
      * Retrieve user and ensure user is exist
      * 
-     * @param  AccountDomainModels\UserId $id
+     * @param  mixed $id
      * @return AccountDomainModels\User
      */
-    protected function retrieveUser(AccountDomainModels\UserId $id)
+    protected function retrieveUser($id)
     {
         $user = $this->userRepository->findById($id);
 
         if(is_null($user)) 
-            throw new ValueNotFoundException("[(string)$id->value()] is not valid user id");
+            throw new ValueNotFoundException("[$id] is not valid user id");
 
         return $user;
     }

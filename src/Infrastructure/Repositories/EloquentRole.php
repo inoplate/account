@@ -8,15 +8,13 @@ use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Account\Domain\Repositories\Role as Contract;
 use Inoplate\Account\Domain\Repositories\Permission as PermissionRepository;
-use Inoplate\Foundation\Infrastructure\GenericEloquentRepository;
-use Illuminate\Contracts\Config\Repository as Config;
 use Roseffendi\Dales\DTDataProvider;
 use Roseffendi\Dales\Laravel\ProvideDTData;
 use DB;
 
 class EloquentRole implements Contract, DTDataProvider
 {
-    use ProvideDTData, GenericEloquentRepository;
+    use ProvideDTData;
 
     /**
      * @var Inoplate\Account\Role
@@ -27,13 +25,6 @@ class EloquentRole implements Contract, DTDataProvider
      * @var Inoplate\Account\Domain\Repositories\Permission
      */
     protected $permissionRepository;
-
-    /**
-     * @var Illuminate\Contracts\Config\Repository
-     */
-    protected $config;
-
-
 
     /**
      * Available columns to serve in datatables
@@ -61,13 +52,11 @@ class EloquentRole implements Contract, DTDataProvider
      * 
      * @param Model                 $model
      * @param PermissionRepository  $permissionRepository
-     * @param Config                $config
      */
-    public function __construct(Model $model, PermissionRepository $permissionRepository, Config $config)
+    public function __construct(Model $model, PermissionRepository $permissionRepository)
     {
         $this->model = $model;
         $this->permissionRepository = $permissionRepository;
-        $this->config = $config;
         $this->dtModel = $model;
     }
 
@@ -81,6 +70,16 @@ class EloquentRole implements Contract, DTDataProvider
         $id = Uuid::uuid4();
 
         return new AccountDomainModels\RoleId($id->toString());
+    }
+
+    /**
+     * Create new eloquent model
+     * 
+     * @return Model
+     */
+    public function getModel()
+    {
+        return $this->model->newInstance();
     }
 
     /**
@@ -103,12 +102,12 @@ class EloquentRole implements Contract, DTDataProvider
     /**
      * Retrieve role by id
      * 
-     * @param  Inoplate\Account\Domain\Models\RoleId $id
+     * @param  mixed $id
      * @return Inoplate\Account\Domain\Models\Role
      */
-    public function findById(AccountDomainModels\RoleId $id)
+    public function findById($id)
     {
-        $role = $this->model->find($id->value());
+        $role = $this->model->find($id);
 
         return $this->toDomainModel($role);
     }
@@ -116,12 +115,12 @@ class EloquentRole implements Contract, DTDataProvider
     /**
      * Retrieve role by name
      * 
-     * @param  Inoplate\Foundation\Domain\Models\Name $name
+     * @param  mixed $name
      * @return Inoplate\Account\Domain\Models\Role
      */
-    public function findByName(FoundationDomainModels\Name $name)
+    public function findByName($name)
     {
-        $role = $this->model->where('name', $name->value())->first();
+        $role = $this->model->where('name', $name)->first();
 
         return $this->toDomainModel($role);
     }
@@ -150,13 +149,14 @@ class EloquentRole implements Contract, DTDataProvider
      */
     public function save(AccountDomainModels\Role $entity)
     {
-        $role = $this->model->firstORNew([ 'id' => $entity->id()->value() ]);
-        $role->id = $entity->id()->value();
-        $role->name = $entity->name()->value();
-        $description = $entity->description()->value();
-        $domainPermissions = $entity->permissions();
+        $entity = $entity->toArray();
 
-        $permissions = [];
+        $role = $this->model->firstORNew(['id' => $entity['id']]);
+        $role->name = $entity['name'];
+
+        $description = $entity['description'];
+        $permissions = $entity['permissions'];
+        $permissionsToSync = [];
 
         foreach ($description as $key => $value) {
             $role->{$key} = $value;
@@ -164,11 +164,13 @@ class EloquentRole implements Contract, DTDataProvider
 
         $role->save();
 
-        foreach ($domainPermissions as $permission) {
-            $permissions[] = $permission->id()->value();
+        foreach ($permissions as $permission) {
+            if(!is_null($permission)) {
+                $permissionsToSync[] = $permission['id'];
+            }
         }
 
-        $this->syncPermission($role->id, $permissions);
+        $this->syncPermission($role->id, $permissionsToSync);
     }
 
     /**
@@ -208,9 +210,10 @@ class EloquentRole implements Contract, DTDataProvider
 
     /**
      * Scope of deleted datatables
+     * 
      * @return self
      */
-    public function dtScopeOfDeleted()
+    public function dtScopeOfTrashed()
     {
         $this->dtModel = $this->dtModel->onlyTrashed();
 
@@ -236,7 +239,7 @@ class EloquentRole implements Contract, DTDataProvider
             $permissions = [];
 
             foreach ($matrices as $matrix) {
-                $permissions[] = $this->permissionRepository->findById(new AccountDomainModels\PermissionId($matrix->permission_id));
+                $permissions[] = $this->permissionRepository->findById($matrix->permission_id);
             }
 
             return new AccountDomainModels\Role($id, $name, $description, $permissions);

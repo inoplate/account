@@ -1,6 +1,6 @@
 @extends('inoplate-account::auth.layout')
 
-{{--*/ $title = trans('inoplate-account::labels.auth.login') /*--}}
+@php($title = trans('inoplate-account::labels.auth.login'))
 
 @section('content')
     <div class="login-box-body">

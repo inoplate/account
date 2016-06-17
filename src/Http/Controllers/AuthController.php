@@ -2,6 +2,7 @@
 
 namespace Inoplate\Account\Http\Controllers;
 
+use Auth;
 use Inoplate\Account\User;
 use Inoplate\Account\Domain\Commands\RegisterNewUser;
 use Inoplate\Foundation\Http\Controllers\Controller;
@@ -30,6 +31,11 @@ class AuthController extends Controller
     protected $username = 'identifier';
 
     /**
+     * @var string
+     */
+    protected $redirectPath = '/admin/dashboard';
+
+    /**
      * Show the application registration form.
      *
      * @return \Illuminate\Http\Response
@@ -54,15 +60,48 @@ class AuthController extends Controller
     }
 
     /**
-     * Send response after user is authenticated
-     * 
-     * @param  Request $request
-     * @param  User    $user
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticated(Request $request, User $user)
+    public function login(Request $request)
     {
-        return redirect()->intended('/admin/dashboard');
+        $this->validateLogin($request);
+
+        // If the class is using the ThrottlesLogins trait, we can automatically throttle
+        // the login attempts for this application. We'll key this by the username and
+        // the IP address of the client making these requests into this application.
+        $throttles = $this->isUsingThrottlesLoginsTrait();
+
+        if ($throttles && $lockedOut = $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return $this->sendLockoutResponse($request);
+        }
+
+        $credentials = $this->getCredentials($request);
+
+        if(filter_var($credentials[$this->loginUsername()], FILTER_VALIDATE_EMAIL) !== false) {
+            $credentials['email'] = $credentials[$this->loginUsername()];
+        }else {
+            $credentials['username'] = $credentials[$this->loginUsername()];
+        }
+
+        unset($credentials[$this->loginUsername()]);
+
+        if (Auth::guard($this->getGuard())->attempt($credentials, $request->has('remember'))) {
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }
+
+        // If the login attempt was unsuccessful we will increment the number of attempts
+        // to login and redirect the user back to the login form. Of course, when this
+        // user surpasses their maximum number of attempts they will get locked out.
+        if ($throttles && ! $lockedOut) {
+            $this->incrementLoginAttempts($request);
+        }
+
+        return $this->sendFailedLoginResponse($request);
     }
 
     /**

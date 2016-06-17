@@ -1,13 +1,10 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.permissions.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.permissions.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.permissions.title'))
+@php($subtitle = trans('inoplate-account::labels.permissions.sub_title'))
 
-@include('inoplate-foundation::partials.datatables-component')
-
-@push('footer-scripts-stack')
-    <script src="/vendor/inoplate-account/permissions/index.js" type="text/javascript"></script>
-@endpush
+@addAsset('datatables')
+@addJs('vendor/inoplate-account/permissions/index.js')
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')

@@ -2,11 +2,9 @@
 
 namespace Inoplate\Account\App\Handlers\Command;
 
-use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Account\Domain\Commands\DetachPermissionFromRole;
 use Inoplate\Account\Domain\Repositories\Role as RoleRepository;
 use Inoplate\Account\Domain\Repositories\Permission as PermissionRepository;
-use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Foundation\App\Services\Events\Dispatcher as Events;
 use Inoplate\Foundation\App\Exceptions\ValueNotFoundException;
 
@@ -52,8 +50,8 @@ class DetachPermissionFromRoleHandler
      */
     public function handle(DetachPermissionFromRole $command)
     {
-        $id = new AccountDomainModels\RoleId($command->id);
-        $permissionId = new AccountDomainModels\PermissionId($command->permissionId);
+        $id = $command->id;
+        $permissionId = $command->permissionId;
 
         $role = $this->retrieveRole($id);
         $permission = $this->retrievePermission($permissionId);
@@ -67,15 +65,15 @@ class DetachPermissionFromRoleHandler
     /**
      * Retrieve role and ensure role is exist
      * 
-     * @param  AccountDomainModels\RoleId $id
+     * @param  mixed $id
      * @return AccountDomainModels\Role
      */
-    protected function retrieveRole(AccountDomainModels\RoleId $id)
+    protected function retrieveRole($id)
     {
         $role = $this->roleRepository->findById($id);
 
         if(is_null($role)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid role id");
+            throw new ValueNotFoundException("[$id] is not valid role id");
 
         return $role;
     }
@@ -83,15 +81,15 @@ class DetachPermissionFromRoleHandler
     /**
      * Retrieve role and ensure role is exist
      * 
-     * @param  AccountDomainModels\PermissionId $id
+     * @param  mixed $id
      * @return AccountDomainModels\Permission
      */
-    protected function retrievePermission(AccountDomainModels\PermissionId $id)
+    protected function retrievePermission($id)
     {
         $role = $this->permissionRepository->findById($id);
 
         if(is_null($role)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid permission id");
+            throw new ValueNotFoundException("[$id] is not valid permission id");
 
         return $role;
     }

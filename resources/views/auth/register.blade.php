@@ -1,8 +1,8 @@
 @extends('inoplate-account::auth.layout')
 @inject('captcha', 'Inoplate\Captcha\Challenge')
 
-{{--*/ $title = trans('inoplate-account::labels.auth.register') /*--}}
-{{--*/ $pageType = $boxType = $logoType = 'register' /*--}}
+@php($title = trans('inoplate-account::labels.auth.register'))
+@php($pageType = $boxType = $logoType = 'register')
 
 @push('header-styles-stack')
     <link href="/vendor/inoplate-account/auth/register.css" type="text/css" rel="stylesheet" />

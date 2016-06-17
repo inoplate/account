@@ -5,13 +5,24 @@ namespace Inoplate\Account\Infrastructure\Repositories;
 use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Account\Domain\Repositories\Permission as Contract;
+use Inoplate\UserManagement\Contracts\Permission\Repository as Permission;
 
 class InMemoryPermission implements Contract
 {
     /**
-     * @var array
+     * @var Inoplate\UserManagement\Contracts\Permission\Repository
      */
-    protected $permissions = [];
+    protected $permission;
+
+    /**
+     * Create new InMemoryPermission instance
+     * 
+     * @param Permission $permission
+     */
+    public function __construct(Permission $permission)
+    {
+        $this->permission = $permission;
+    }
 
     /**
      * Retrieve all permissions
@@ -20,30 +31,27 @@ class InMemoryPermission implements Contract
      */
     public function all()
     {
-        $permissions = [];
+        $return = [];
+        $permissions = $this->permission->all();
 
-        foreach ($this->permissions as $permission) {
-            $permissions[] = $this->toDomainModel($permission);
+        foreach ($permissions as $permission) {
+            $return[] = $this->toDomainModel($permission);
         }
 
-        return $permissions;
+        return $return;
     }
 
     /**
      * Retrieve permission by id
      * 
-     * @param  PermissionId $id
+     * @param  mixed $id
      * @return null|Inoplate\Account\Domain\Models\Permission
      */
-    public function findById(AccountDomainModels\PermissionId $id)
+    public function findById($id)
     {
-        $key = array_search($id->value(), array_column($this->permissions, 'id'));
+        $permission = $this->permission->get($id);
 
-        if($key === false) {
-            return null;
-        }
-        
-        return $this->toDomainModel($this->permissions[$key]);
+        return $this->toDomainModel($permission);
     }
 
     /**
@@ -96,8 +104,12 @@ class InMemoryPermission implements Contract
      */
     protected function toDomainModel($permission)
     {
-        $id = new AccountDomainModels\PermissionId($permission['id']);
-        $description = new FoundationDomainModels\Description( array_except($permission, ['id']) );
+        if(is_null($permission)) {
+            return $permission;
+        }
+
+        $id = new AccountDomainModels\PermissionId($permission['name']);
+        $description = new FoundationDomainModels\Description( array_except($permission, 'name') );
 
         return new AccountDomainModels\Permission($id, $description);
     }

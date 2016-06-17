@@ -1,7 +1,7 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.profile.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.profile.sub_title') /*--}}
+@php($title = trans('inoplate-account::labels.profile.title'))
+@php($subtitle = trans('inoplate-account::labels.profile.sub_title'))
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')

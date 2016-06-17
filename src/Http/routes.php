@@ -16,7 +16,7 @@ $router->group(['middleware' => ['guest']], function($router){
 
     // User confirmation link request routes
     
-    $router->get('register/confirmation/{token}', ['uses' => 'RegisterController@getConfirmation', 'as' => 'account.auth.register.confirmation.get']);
+    // $router->get('register/confirmation/{token}', ['uses' => 'RegisterController@getConfirmation', 'as' => 'account.auth.register.confirmation.get']);
 
     // Password reset link request routes
     
@@ -40,23 +40,30 @@ $router->get('confirm-email-change/{token}', ['uses' => 'ConfirmEmailChangeContr
 $router->group(['prefix' => 'admin', 'middleware' => ['auth']], function($router){
     $router->get('dashboard', ['uses' => 'DashboardController@getIndex', 'as' => 'account.admin.dashboard.index.get']);
 
-    $router->group(['middleware' => ['authorized']], function($router) {
+    $router->group(['middleware' => ['authorize']], function($router) {
         $router->get('inoplate-account/users', ['uses' => 'UsersController@getIndex', 'as' => 'account.admin.users.index.get']);
         $router->get('inoplate-account/users/datatables/{trashed?}', ['uses' => 'UsersController@getDatatables', 'as' => 'account.admin.users.datatables.get']);
+        $router->get('inoplate-account/users/{id}', ['uses' => 'UsersController@getShow', 'as' => 'account.admin.users.show.get']);
+        
         $router->get('inoplate-account/users/register', ['uses' => 'UsersController@getRegister', 'as' => 'account.admin.users.register.get']);
         $router->post('inoplate-account/users/register', ['uses' => 'UsersController@postRegister', 'as' => 'account.admin.users.register.post']);
+
         $router->get('inoplate-account/users/{id}/edit', ['uses' => 'UsersController@getUpdate', 'as' => 'account.admin.users.update.get']);
-        $router->put('inoplate-account/users/{id}', ['uses' => 'UsersController@putUpdate', 'as' => 'account.admin.users.update.put']);
+        $router->put('inoplate-account/users/{id}/edit', ['uses' => 'UsersController@putUpdate', 'as' => 'account.admin.users.update.put']);
+        
         $router->delete('inoplate-account/users/{ids}', ['uses' => 'UsersController@delete', 'as' => 'account.admin.users.delete']);
         $router->put('inoplate-account/users/restore/{ids}', ['uses' => 'UsersController@putRestore', 'as' => 'account.admin.users.restore.put']);
         $router->delete('inoplate-account/users/delete/{ids}', ['uses' => 'UsersController@deleteForceDelete', 'as' => 'account.admin.users.force-delete']);
 
         $router->get('inoplate-account/roles', ['uses' => 'RoleController@getIndex', 'as' => 'account.admin.roles.index.get']);
         $router->get('inoplate-account/roles/datatables/{trashed?}', ['uses' => 'RoleController@getDatatables', 'as' => 'account.admin.roles.datatables.get']);
+
         $router->get('inoplate-account/roles/create', ['uses' => 'RoleController@getCreate', 'as' => 'account.admin.roles.create.get']);
         $router->post('inoplate-account/roles/create', ['uses' => 'RoleController@postCreate', 'as' => 'account.admin.roles.create.post']);
+
         $router->get('inoplate-account/roles/{id}/edit', ['uses' => 'RoleController@getUpdate', 'as' => 'account.admin.roles.update.get']);
-        $router->put('inoplate-account/roles/{id}', ['uses' => 'RoleController@putUpdate', 'as' => 'account.admin.roles.update.put']);
+        $router->put('inoplate-account/roles/{id}/edit', ['uses' => 'RoleController@putUpdate', 'as' => 'account.admin.roles.update.put']);
+
         $router->delete('inoplate-account/roles/{ids}', ['uses' => 'RoleController@delete', 'as' => 'account.admin.roles.delete']);
         $router->put('inoplate-account/roles/restore/{ids}', ['uses' => 'RoleController@putRestore', 'as' => 'account.admin.roles.restore.put']);
         $router->delete('inoplate-account/roles/delete/{ids}', ['uses' => 'RoleController@deleteForceDelete', 'as' => 'account.admin.roles.force-delete']);
@@ -67,4 +74,5 @@ $router->group(['prefix' => 'admin', 'middleware' => ['auth']], function($router
 
     $router->get('profile', ['uses' => 'ProfileController@getIndex', 'as' => 'account.admin.profile.index.get']);
     $router->put('profile', ['uses' => 'ProfileController@putUpdate', 'as' => 'account.admin.profile.index.put']);    
+    $router->put('profile/avatar/{id?}', ['uses' => 'ProfileController@putUpdateAvatar', 'as' => 'account.admin.profile.avatar.put']);
 });

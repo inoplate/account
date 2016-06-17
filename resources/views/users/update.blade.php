@@ -1,8 +1,8 @@
 @extends('inoplate-foundation::layouts.default')
 
-{{--*/ $title = trans('inoplate-account::labels.users.update.title') /*--}}
-{{--*/ $subtitle = trans('inoplate-account::labels.users.update.sub_title') /*--}}
-{{--*/ $user['name'] = $user['description']['name'] /*--}}
+@php($title = trans('inoplate-account::labels.users.update.title'))
+@php($subtitle = trans('inoplate-account::labels.users.update.sub_title'))
+@php($user['name'] = $user['description']['name'])
 
 @section('content')
     @include('inoplate-foundation::partials.content-header')
@@ -12,7 +12,7 @@
             <div class="col-md-8">
                 <div class="box box-info">
 
-                <form class="ajax" method="post" action="/admin/inoplate-account/users/{{ $user['id'] }}">
+                <form class="ajax" method="post" action="{{ route('account.admin.users.update.put', ['id' => $user['id']]) }}">
                     <input type="hidden" name="_method" value="put" />
                     <div class="box-body">
                       @include('inoplate-account::users.form')

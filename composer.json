@@ -29,8 +29,7 @@
         "codeception/verify": "^0.3.0"
     },
     "require": {
-        "ramsey/uuid": "^3.1",
-        "inoplate/foundation": "0.1-dev"
+        "ramsey/uuid": "^3.1"
     },
     "extra": {
         "branch-alias": {

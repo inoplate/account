@@ -65,14 +65,14 @@ class RoleController extends Controller
 
         $bus->dispatch( new Commands\CreateNewRole($request->name, ['slug' => $request->slug]) );
 
-        $role = $this->roleRepository->findByName(new FoundationDomainModels\Name($request->name))->toArray();
+        $role = $this->roleRepository->findByName($request->name)->toArray();
 
         return $this->formSuccess(route('account.admin.roles.index.get'), ['message' => trans('inoplate-account::messages.role.created'), 'role' => $role]);
     }
 
     public function getUpdate($id)
     {
-        $role = $this->roleRepository->findById(new AccountDomainModels\RoleId($id));
+        $role = $this->roleRepository->findById($id);
 
         if(is_null($role)) {
             abort(404);
@@ -85,7 +85,7 @@ class RoleController extends Controller
 
     public function putUpdate(Request $request, Bus $bus, $id)
     {
-        $role = $this->roleRepository->findById(new AccountDomainModels\RoleId($id));
+        $role = $this->roleRepository->findById($id);
 
         if(is_null($role)) {
             abort(404);
@@ -100,7 +100,7 @@ class RoleController extends Controller
 
         $bus->dispatch( new Commands\DescribeRole($id, $request->name, ['slug' => $request->slug]));
 
-        $role = $this->roleRepository->findById(new AccountDomainModels\RoleId($id))->toArray();
+        $role = $this->roleRepository->findById($id)->toArray();
 
         return $this->formSuccess(route('account.admin.roles.index.get'), ['message' => trans('inoplate-account::messages.role.updated'), 'role' => $role]);
     }
@@ -161,7 +161,8 @@ class RoleController extends Controller
 
     protected function getTrashedDatatables(Dales $dales)
     {
-        return $dales->setDTDataProvider($this->roleRepository, ['deleted'])
+        return $dales->setDTDataProvider($this->roleRepository)
+                     ->ofTrashed()
                      ->render();
     }
 }

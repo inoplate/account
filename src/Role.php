@@ -29,7 +29,7 @@ class Role extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['id', 'name', 'slug'];
 
     /**
      * The attributes that should be mutated to dates.

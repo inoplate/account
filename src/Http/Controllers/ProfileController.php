@@ -4,25 +4,31 @@ namespace Inoplate\Account\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
+use Inoplate\Account\Domain\Repositories\User as UserRepository;
 use Inoplate\Account\Domain\Commands\DescribeUser;
 use Inoplate\Foundation\Http\Controllers\Controller;
 use Inoplate\Foundation\App\Services\Bus\Dispatcher;
 use Inoplate\Account\App\Services\User\EmailResetter;
+use Roseffendi\Authis\Authis;
 
 class ProfileController extends Controller
 {
     protected $auth;
 
-    public function __construct(Guard $auth)
+    protected $authis;
+
+    public function __construct(Guard $auth, Authis $authis)
     {
         $this->auth = $auth;
+        $this->authis = $authis;
     }
 
-    public function getIndex()
+    public function getIndex(UserRepository $userRepository)
     {
         $user = $this->auth->user();
+        $userDomain = $userRepository->findById($user->id);
 
-        return view('inoplate-account::profile.index', compact('user'));
+        return view('inoplate-account::profile.index', ['user' => $userDomain->toArray()]);
     }
 
     public function putUpdate(Dispatcher $bus, Request $request, EmailResetter $emailResetter)
@@ -49,6 +55,23 @@ class ProfileController extends Controller
         // Keep email with current email, user need to reconfirm it
         $bus->dispatch( new DescribeUser($user->id, $request->username, $user->email, $desc));
 
-        return $this->formSuccess(route('account.admin.profile.index.get'), ['message' => trans('inoplate-account::message.profile.updated')]);
+        return $this->formSuccess(route('account.admin.profile.index.get'), ['message' => trans('inoplate-account::messages.profile.updated')]);
+    }
+
+    public function putUpdateAvatar(Dispatcher $bus, Request $request, UserRepository $userRepository, $id)
+    {
+        $userId = $this->authis->check('account.admin.users.update.get') ? $id : $request->user()->id;
+
+        $user = $userRepository->findById($userId)->toArray();
+        $description = $user['description'];
+
+        $this->validate($request, [
+            'avatar' => 'required'
+        ]);
+
+        $description['avatar'] = $request->avatar;
+
+        $bus->dispatch( new DescribeUser($userId, $user['username'], $user['email'], $description));
+        return $this->formSuccess(route('account.admin.profile.index.get'), ['message' => trans('inoplate-account::messages.profile.avatar_updated')]);
     }
 }

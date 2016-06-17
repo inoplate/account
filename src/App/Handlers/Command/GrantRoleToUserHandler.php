@@ -50,8 +50,8 @@ class GrantRoleToUserHandler
      */
     public function handle(GrantRoleToUser $command)
     {
-        $userId = new AccountDomainModels\UserId($command->id);
-        $roleId = new AccountDomainModels\RoleId($command->roleId);
+        $userId = $command->id;
+        $roleId = $command->roleId;
 
         $user = $this->retrieveUser($userId);
         $role = $this->retrieveRole($roleId);
@@ -65,15 +65,15 @@ class GrantRoleToUserHandler
     /**
      * Retrieve user and ensure user is exist
      * 
-     * @param  AccountDomainModels\UserId $id
+     * @param  mixed $id
      * @return AccountDomainModels\User
      */
-    protected function retrieveUser(AccountDomainModels\UserId $id)
+    protected function retrieveUser($id)
     {
         $user = $this->userRepository->findById($id);
 
         if(is_null($user)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid user id");
+            throw new ValueNotFoundException("[$id] is not valid user id");
 
         return $user;
     }
@@ -81,15 +81,15 @@ class GrantRoleToUserHandler
     /**
      * Retrieve role and ensure role is exist
      * 
-     * @param  AccountDomainModels\RoleId $id
+     * @param  mixed $id
      * @return AccountDomainModels\Role
      */
-    protected function retrieveRole(AccountDomainModels\RoleId $id)
+    protected function retrieveRole($id)
     {
         $role = $this->roleRepository->findById($id);
 
         if(is_null($role)) 
-            throw new ValueNotFoundException("[(string)$id] is not valid role id");
+            throw new ValueNotFoundException("[$id] is not valid role id");
 
         return $role;
     }
