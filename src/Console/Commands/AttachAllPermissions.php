@@ -5,7 +5,6 @@ namespace Inoplate\Account\Console\Commands;
 use Illuminate\Console\Command;
 use Inoplate\Account\Domain\Commands;
 use Inoplate\Account\Domain\Repositories;
-use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Foundation\App\Services\Bus\Dispatcher as Bus;
 use DB;
 
@@ -66,7 +65,7 @@ class AttachAllPermissions extends Command
     public function handle()
     {
         $roleName = $this->ask('Role name?');
-        $role = $this->roleRepository->findByName( new FoundationDomainModels\Name($roleName) );
+        $role = $this->roleRepository->findByName($roleName);
 
         if(is_null($role)) {
             $this->error('Rolename ['. $roleName .'] doesn\'t exist ');

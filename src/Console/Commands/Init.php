@@ -5,7 +5,6 @@ namespace Inoplate\Account\Console\Commands;
 use Illuminate\Console\Command;
 use Inoplate\Account\Domain\Commands;
 use Inoplate\Account\Domain\Repositories;
-use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Foundation\App\Services\Bus\Dispatcher as Bus;
 use DB;
 
@@ -69,7 +68,7 @@ class Init extends Command
 
         $this->initRole();
 
-        $administrator = $this->roleRepository->findByName(new FoundationDomainModels\Name('administrator'));
+        $administrator = $this->roleRepository->findByName('administrator');
         $this->attachPermissionToRole($administrator);
         $this->initUser($administrator);
     }

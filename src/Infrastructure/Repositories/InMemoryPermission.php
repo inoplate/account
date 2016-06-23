@@ -5,12 +5,12 @@ namespace Inoplate\Account\Infrastructure\Repositories;
 use Inoplate\Account\Domain\Models as AccountDomainModels;
 use Inoplate\Foundation\Domain\Models as FoundationDomainModels;
 use Inoplate\Account\Domain\Repositories\Permission as Contract;
-use Inoplate\UserManagement\Contracts\Permission\Repository as Permission;
+use Inoplate\Auth\Contracts\Permission\Repository as Permission;
 
 class InMemoryPermission implements Contract
 {
     /**
-     * @var Inoplate\UserManagement\Contracts\Permission\Repository
+     * @var Inoplate\Auth\Contracts\Permission\Repository
      */
     protected $permission;
 

@@ -8,7 +8,7 @@
     <section class="content">
         <div class="row">
             <div class="col-md-5">
-                {!! Widget::render('inoplate.account.admin.dashboard.left') !!}
+                {!! $widgets->render('inoplate.account.admin.dashboard.left') !!}
             </div>
             <div class="col-md-7">
             </div>
