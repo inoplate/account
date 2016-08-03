@@ -43,10 +43,11 @@ $router->group(['prefix' => 'admin', 'middleware' => ['auth']], function($router
     $router->group(['middleware' => ['authorize']], function($router) {
         $router->get('inoplate-account/users', ['uses' => 'UsersController@getIndex', 'as' => 'account.admin.users.index.get']);
         $router->get('inoplate-account/users/datatables/{trashed?}', ['uses' => 'UsersController@getDatatables', 'as' => 'account.admin.users.datatables.get']);
-        $router->get('inoplate-account/users/{id}', ['uses' => 'UsersController@getShow', 'as' => 'account.admin.users.show.get']);
         
         $router->get('inoplate-account/users/register', ['uses' => 'UsersController@getRegister', 'as' => 'account.admin.users.register.get']);
         $router->post('inoplate-account/users/register', ['uses' => 'UsersController@postRegister', 'as' => 'account.admin.users.register.post']);
+
+        $router->get('inoplate-account/users/{id}', ['uses' => 'UsersController@getShow', 'as' => 'account.admin.users.show.get']);
 
         $router->get('inoplate-account/users/{id}/edit', ['uses' => 'UsersController@getUpdate', 'as' => 'account.admin.users.update.get']);
         $router->put('inoplate-account/users/{id}/edit', ['uses' => 'UsersController@putUpdate', 'as' => 'account.admin.users.update.put']);

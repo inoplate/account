@@ -5,6 +5,8 @@
     <h3 class="widget-user-username">{{ $user['description']['name'] or '' }}</h3>
     <h5 class="widget-user-desc">{{ $user['description']['type'] or trans('inoplate-foundation::labels.users.type.generic') }}</h5>
   </div>
+
+  
   <div class="media-selector-wrapper" data-non-image-error="{{ trans('inoplate-account::messages.profile.avatar_must_be_image') }}">
     @include('inoplate-media::library.finder')
     <div class="widget-user-image media-selector">

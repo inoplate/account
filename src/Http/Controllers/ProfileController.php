@@ -9,6 +9,8 @@ use Inoplate\Account\Domain\Commands\DescribeUser;
 use Inoplate\Foundation\Http\Controllers\Controller;
 use Inoplate\Foundation\App\Services\Bus\Dispatcher;
 use Inoplate\Account\App\Services\User\EmailResetter;
+use Inoplate\Media\Domain\Repositories\Library as LibraryRepository;
+use Inoplate\Media\Domain\Commands\DescribeLibrary;
 use Roseffendi\Authis\Authis;
 
 class ProfileController extends Controller
@@ -58,9 +60,15 @@ class ProfileController extends Controller
         return $this->formSuccess(route('account.admin.profile.index.get'), ['message' => trans('inoplate-account::messages.profile.updated')]);
     }
 
-    public function putUpdateAvatar(Dispatcher $bus, Request $request, UserRepository $userRepository, $id)
-    {
+    public function putUpdateAvatar(
+        Dispatcher $bus, 
+        Request $request, 
+        UserRepository $userRepository, 
+        LibraryRepository $libraryRepository, 
+        $id
+    ) {
         $userId = $this->authis->check('account.admin.users.update.get') ? $id : $request->user()->id;
+        $library = $libraryRepository->findByPath($request->avatar);
 
         $user = $userRepository->findById($userId)->toArray();
         $description = $user['description'];
@@ -72,6 +80,15 @@ class ProfileController extends Controller
         $description['avatar'] = $request->avatar;
 
         $bus->dispatch( new DescribeUser($userId, $user['username'], $user['email'], $description));
+
+        if($library) {
+            $library = $library->toArray();
+            $libraryDescription = $library['description'];
+            $libraryDescription['visibility'] = 'public';
+
+            $bus->dispatch(new DescribeLibrary($library['id'], $libraryDescription));
+        }
+
         return $this->formSuccess(route('account.admin.profile.index.get'), ['message' => trans('inoplate-account::messages.profile.avatar_updated')]);
     }
 }

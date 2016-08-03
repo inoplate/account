@@ -10,14 +10,6 @@ elixir.extend('publishAssets', function() {
     }).watch("resources/assets/**");
 });
 
-var datatablesScripts = [
-    'public/vendor/inoplate-adminutes/vendor/datatables/js/jquery.dataTables.min.js',
-    'public/vendor/inoplate-adminutes/vendor/datatables/js/dataTables.bootstrap.min.js',
-    'public/vendor/inoplate-adminutes/vendor/datatables/extensions/buttons/js/dataTables.buttons.min.js',
-    'public/vendor/inoplate-adminutes/vendor/datatables/extensions/select/js/dataTables.select.min.js',
-    'public/vendor/inoplate-foundation/js/datatables.extended.js'
-];
-
 elixir(function(mix){
     mix.less('auth/register.less', 'public/auth')
        .coffee('users/register.coffee', 'public/users')

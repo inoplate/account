@@ -90,7 +90,6 @@ class UsersController extends Controller
 
     public function getShow(RoleRepository $roleRepository, $id)
     {
-        dd('asdasd');
         $user = $this->userRepository->findById($id);
         $roles = $roleRepository->all();
 
