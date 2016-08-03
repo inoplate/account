@@ -68,7 +68,7 @@ class Init extends Command
 
         $this->initRole();
 
-        $administrator = $this->roleRepository->findByName('administrator');
+        $administrator = $this->roleRepository->findByName('Administrator');
         $this->attachPermissionToRole($administrator);
         $this->initUser($administrator);
     }
