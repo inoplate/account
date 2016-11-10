@@ -119,9 +119,9 @@ class AuthController extends Controller
         ];
 
         if(config('inoplate.account.enable_captcha')) {
-            $captchaDriver = config('captcha.challenge');
+            $captchaDriver = config('inoplate.captcha.challenge');
 
-            $rules[config('captcha.drivers.'.$captchaDriver.'.input')] = 'required|captcha';
+            $rules[config('inoplate.captcha.drivers.'.$captchaDriver.'.input')] = 'required|captcha';
         }
 
         $this->validate($request, $rules);

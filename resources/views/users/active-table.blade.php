@@ -32,7 +32,7 @@
                     </div>
                     <div class="form-group">
                       <label for="password_confirmation" class="control-label">{{ trans('inoplate-account::labels.password_confirmation') }}</label>
-                      <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" data-rule-equalto=[name="password"] placeholder="{{ trans('inoplate-account::labels.password_confirmation') }}">
+                      <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="{{ trans('inoplate-account::labels.password_confirmation') }}">
                       @include('inoplate-adminutes::partials.form-error', ['field' => 'password_confirmation'])
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group">
                       <label for="password_confirmation" class="control-label">{{ trans('inoplate-account::labels.password_confirmation') }}</label>
-                      <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" data-rule-equalto=[name="password"] placeholder="{{ trans('inoplate-account::labels.password_confirmation') }}">
+                      <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="{{ trans('inoplate-account::labels.password_confirmation') }}">
                       @include('inoplate-adminutes::partials.form-error', ['field' => 'password_confirmation'])
                     </div>
                 </div>

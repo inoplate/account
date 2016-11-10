@@ -30,7 +30,7 @@ class ConfirmEmailChangeController extends Controller
         if(is_null($email))
             abort(404);
 
-        $user = $this->userRepository->findById( new UserId($email->user_id));
+        $user = $this->userRepository->findById($email->user_id);
         $userId = $user->id()->value();
 
         $bus->dispatch( new DescribeUser($userId, $user->username()->value(), $email->email));

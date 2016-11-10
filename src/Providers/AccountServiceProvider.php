@@ -19,6 +19,7 @@ class AccountServiceProvider extends ServiceProvider
         'Inoplate\Account\Providers\CommandServiceProvider',
         'Inoplate\Account\Providers\ConsoleServiceProvider',
         'Inoplate\Account\Providers\WidgetServiceProvider',
+        'Inoplate\Account\Providers\EventServiceProvider',
     ];
 
     /**

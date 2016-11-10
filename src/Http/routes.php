@@ -32,7 +32,7 @@ $router->group(['middleware' => ['guest']], function($router){
 // Logout routes
 
 $router->get('logout', ['uses' => 'AuthController@getLogout', 'as' => 'account.auth.logout.get']);
-$router->get('confirm-email-change/{token}', ['uses' => 'ConfirmEmailChangeController@putConfirm']);
+$router->get('confirm-email-change/{token}', ['uses' => 'ConfirmEmailChangeController@putConfirm', 'as' => 'account.auth.email.reset']);
 
 // Protected routes
 // Only authenticated and authorized user can access this endpoints
