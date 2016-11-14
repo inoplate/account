@@ -18,9 +18,9 @@ class Usercard extends BaseWidget
     protected $view = 'inoplate-account::widgets.user-card';
 
     /**
-     * @var Inoplate\Account\Domain\Models\User
+     * @var Auth
      */
-    protected $user;
+    protected $auth;
 
     /**
      * Create new Usercard instance
@@ -30,7 +30,7 @@ class Usercard extends BaseWidget
      */
     public function __construct(Guard $auth, UserRepository $userRepository)
     {
-        $this->user = $userRepository->findById($auth->user()->id);
+        $this->auth = $auth;
     }
 
     /**
@@ -39,7 +39,7 @@ class Usercard extends BaseWidget
     public function options()
     {
         return [
-            'user' => $this->user->toArray()
+            'user' => $this->auth->user()
         ];
     }
 }

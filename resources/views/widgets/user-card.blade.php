@@ -2,7 +2,7 @@
 
 <div class="box box-widget widget-user">
   <div class="widget-user-header {{ $cardCover or 'bg-aqua-active' }}">
-    <h3 class="widget-user-username">{{ $user['description']['name'] or '' }}</h3>
+    <h3 class="widget-user-username">{{ $user['name'] or '' }}</h3>
     <h5 class="widget-user-desc">{{ $user['description']['type'] or trans('inoplate-foundation::labels.users.type.generic') }}</h5>
   </div>
 
@@ -10,7 +10,7 @@
   <div class="media-selector-wrapper" data-non-image-error="{{ trans('inoplate-account::messages.profile.avatar_must_be_image') }}">
     @include('inoplate-media::library.finder')
     <div class="widget-user-image media-selector">
-      <img class="img-circle" src="{{ $user['description']['avatar'] or '/vendor/inoplate-adminutes/img/user-128x128.png' }}" alt="User Avatar">
+      <img class="img-circle" src="{{ $user['avatar'] or '/vendor/inoplate-adminutes/img/user-128x128.png' }}" alt="User Avatar">
       <div class="overlay img-circle">
         <i class="fa fa-image"></i>
       </div>
@@ -18,7 +18,7 @@
         <form class="hide ajax" action="{{ url('/admin/profile/avatar', [$userId]) }}" method="post">
           <input type="hidden" name="_token" value="{{ csrf_token() }}" />
           <input type="hidden" name="_method" value="put" />
-          <input type="text" name="avatar" value="{{ $user['description']['avatar'] or '/vendor/inoplate-adminutes/img/user-128x128.png' }}"/>
+          <input type="text" name="avatar" value="{{ $user['avatar'] or '/vendor/inoplate-adminutes/img/user-128x128.png' }}"/>
         </form>
       @endif
     </div>
