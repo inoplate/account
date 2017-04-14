@@ -131,6 +131,6 @@ class AuthController extends Controller
         $description['password'] = bcrypt($request->input('password'));
         $this->execute( new RegisterNewUser($username, $email, [], $description) );
 
-        return redirect('/login');
+        return redirect('/login')->with('success', 'Silahkan cek email anda untuk aktivasi');
     }
 }
