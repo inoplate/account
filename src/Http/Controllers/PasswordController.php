@@ -5,6 +5,7 @@ namespace Inoplate\Account\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Password;
 
 class PasswordController extends Controller
