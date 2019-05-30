@@ -23,6 +23,8 @@ class PasswordController extends Controller
 
     use ResetsPasswords;
 
+    protected $resetView = 'inoplate-account::auth.password.reset';
+
     /**
      * Reset success redirect path
      * 
@@ -48,26 +50,6 @@ class PasswordController extends Controller
     public function showLinkRequestForm()
     {
         return view('inoplate-account::auth.password.email');
-    }
-
-    /**
-     * Display the password reset view for the given token.
-     *
-     * If no token is present, display the link request form.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $token
-     * @return \Illuminate\Http\Response
-     */
-    public function showResetForm(Request $request, $token = null)
-    {
-        if (is_null($token)) {
-            return $this->getEmail();
-        }
-
-        $email = $request->input('email');
-
-        return view('inoplate-account::auth.password.reset')->with('token', $token);
     }
 
     /**
