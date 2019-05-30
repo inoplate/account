@@ -2,7 +2,7 @@
     "name": "inoplate/account",
     "description": "Inoplate account manager",
     "type": "composer",
-    "license": "increative",
+    "license": "MIT",
     "authors": [
         {
             "name": "Roseffendi",
